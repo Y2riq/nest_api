@@ -1,8 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { CurrentUser } from '../auth/decorators/current-user.decorator.js';
+import { AuthGuard } from '../guards/auth.guard.js';
 import { Serialize } from '../interceptors/serialize.interceptor.js';
 import { CreateUserDto } from './dtos/create-user.dto.js';
 import { UpdateUserDto } from './dtos/update-user.dto.js';
 import { UserDto } from './dtos/user.dto.js';
+import { User } from './user.entity.js';
 import { UsersService } from './users.service.js';
 
 @Controller('users')
@@ -35,6 +38,11 @@ export class UsersController {
         return this.usersService.update(parseInt(id), body);
     }
 
+    @Get('/auth/current-user')
+    @UseGuards(AuthGuard)
+    currentUser(@CurrentUser() user: User) {
+        return user;
+    }
     
 
 }
