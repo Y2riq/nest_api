@@ -56,7 +56,7 @@ import { AuthService } from './auth.service.js';
 
       it('should fail if user login with invalid email', async () => {
         await expect(
-          service.login('abdul@example.com', 'password'),
+          service.login('Ariq@example.com', 'password'),
         ).rejects.toThrow('User not found');
       });
 

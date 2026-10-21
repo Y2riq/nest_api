@@ -1,33 +1,52 @@
-import { Exclude } from "class-transformer";
-import { AfterInsert, AfterRemove, AfterUpdate, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Logger } from '@nestjs/common';
+import { Exclude } from 'class-transformer';
+import {
+  AfterInsert,
+  AfterRemove,
+  AfterUpdate,
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  type Relation,
+} from 'typeorm';
+import { Item } from '../items/item.entity.js';
 
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+  private readonly logger = new Logger(User.name);
 
-    @Column()
-    name: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    email: string;
+  @Column()
+  name: string;
 
-    @Column()
-    @Exclude()
-    password: string;
+  @Column({ unique: true })
+  email: string;
 
-    @AfterInsert()
-    afterInsert() {
-        console.log('User created:', this.id);
-    }
+  @Column()
+  @Exclude()
+  password: string;
 
-    @AfterUpdate()
-    afterUpdate() {
-        console.log('User updated:', this.id);
-    }
+  @Column({ default: false })
+  admin: boolean;
 
-    @AfterRemove()
-    afterRemove() {
-        console.log('User removed:', this.id);
-    }
+  @OneToMany(() => Item, (item) => item.user)
+  items: Relation<Item[]>;
+
+  @AfterInsert()
+  afterInsert() {
+    this.logger.log(`User created: ${this.id}`);
+  }
+
+  @AfterUpdate()
+  afterUpdate() {
+    this.logger.log(`User updated: ${this.id}`);
+  }
+
+  @AfterRemove()
+  afterRemove() {
+    this.logger.log(`User removed: ${this.id}`);
+  }
 }
